@@ -37,8 +37,6 @@ const greyScale = ["#000000", "#333333", "#666666", "#999999", "#cccccc"];
 
 const colourPalette = [...colours, ...greyScale];
 
-console.log(colourPalette);
-
 const barHeight = 55;
 const marginTop = 30;
 const marginRight = 0;
