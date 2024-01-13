@@ -101,13 +101,13 @@ const getAllRepoInformation = async (username = USERNAME) => {
 const getRepoNames = (repos) => repos.map((repo) => repo.name);
 
 /**
- * Fetches tags for a specific repository.
+ * Fetches topics for a specific repository.
  *
  * @param {string} repo - The name of the repository.
- * @throws {Error} Throws an error if there's an issue fetching tag information.
- * @returns {Promise<Array>} A promise that resolves to an array containing tag names for the specified repository.
+ * @throws {Error} Throws an error if there's an issue fetching topic information.
+ * @returns {Promise<Array>} A promise that resolves to an array containing topic names for the specified repository.
  */
-const getRepoTags = async (repo) => {
+const getRepoTopics = async (repo) => {
     try {
         const response = await octokit.request(TAG_API_ROUTE, {
             owner: USERNAME,
@@ -120,80 +120,80 @@ const getRepoTags = async (repo) => {
         return response.data.names;
     } catch (error) {
         // Log the error
-        console.error(red(`Error fetching tag information: ${error.message}`));
+        console.error(red(`Error fetching topic information: ${error.message}`));
 
         // Rethrow the error with a more descriptive message
         throw new Error(
-            `Error fetching tags for repo ${repo}: ${error.message}`
+            `Error fetching topics for repo ${repo}: ${error.message}`
         );
     }
 };
 
 /**
- * Fetches tags for multiple repositories in parallel.
+ * Fetches topics for multiple repositories in parallel.
  *
  * @param {Array} repoNames - An array of repository names.
- * @returns {Promise<Array>} A promise that resolves to an array containing tag names for multiple repositories.
+ * @returns {Promise<Array>} A promise that resolves to an array containing topic names for multiple repositories.
  */
-const getAllRepoTags = async (repoNames) =>
-    Promise.all(repoNames.map(getRepoTags));
+const getAllRepoTopics = async (repoNames) =>
+    Promise.all(repoNames.map(getRepoTopics));
 
 /**
- * Creates an array of objects representing tag counts based on the input array of tags.
+ * Creates an array of objects representing topic counts based on the input array of topics.
  *
- * @param {string[]} formattedRepoTags - An array containing tag names.
- * @returns {Object[]} An array of objects with tag names as keys and their corresponding counts as values.
+ * @param {string[]} formattedRepoTopics - An array containing topic names.
+ * @returns {Object[]} An array of objects with topic names as keys and their corresponding counts as values.
  */
-const createTagObject = (formattedRepoTags) => {
-    // Create an object to count tag occurrences
-    const tagCountObject = formattedRepoTags.reduce((acc, tag) => {
-        const lowercaseTag = tag.toLowerCase();
-        acc[lowercaseTag] = (acc[lowercaseTag] || 0) + 1;
+const createTopicObject = (formattedRepoTopics) => {
+    // Create an object to count topic occurrences
+    const topicCountObject = formattedRepoTopics.reduce((acc, topic) => {
+        const lowercaseTopic = topic.toLowerCase();
+        acc[lowercaseTopic] = (acc[lowercaseTopic] || 0) + 1;
         return acc;
     }, {});
 
     // Convert the object to an array of objects
-    const tagCountArray = Object.entries(tagCountObject).map(
-        ([tag, count]) => ({
-            tag,
+    const topicCountArray = Object.entries(topicCountObject).map(
+        ([topic, count]) => ({
+            topic,
             count,
         })
     );
 
     // Sort the array by count in descending order
-    tagCountArray.sort(
-        (a, b) => b.count - a.count || a.tag.localeCompare(b.tag)
+    topicCountArray.sort(
+        (a, b) => b.count - a.count || a.topic.localeCompare(b.topic)
     );
 
-    return tagCountArray;
+    return topicCountArray;
 };
 
 /**
- * Filters out specified tags and tags with count less than or equal to 1.
+ * Filters out specified topics and topics with count less than or equal to 1.
  *
- * @param {Object[]} tags - An array of objects with tag names and their corresponding counts.
- * @param {string[]} tagsToFilter - An array of tag names to filter out.
- * @returns {Object[]} An array of filtered objects with tag names and counts.
+ * @param {Object[]} topics - An array of objects with topic names and their corresponding counts.
+ * @param {string[]} topicsToFilter - An array of topic names to filter out.
+ * @returns {Object[]} An array of filtered objects with topic names and counts.
  */
-const filterTags = (tags, tagsToFilter = ["freecodecamp", "codepen"]) => {
-    return tags.filter(
-        (tag) => tag.count > 1 && !tagsToFilter.includes(tag.tag)
+const filterTopics = (topics, topicsToFilter = ["freecodecamp", "codepen"]) => {
+    return topics.filter(
+        (topic) => topic.count > 1 && !topicsToFilter.includes(topic.topic)
     );
 };
 
 /**
- * Logs the response containing formatted repository tags.
+ * Logs the response containing formatted repository topics.
  */
 const logResponse = async () => {
     try {
         const allRepos = await getAllRepoInformation();
         const repoNames = getRepoNames(allRepos);
-        const allRepoTags = await getAllRepoTags(repoNames);
-        const formattedRepoTags = allRepoTags.flatMap((tags) => tags);
-        const tagObject = createTagObject(formattedRepoTags);
-        const filteredTags = filterTags(tagObject);
-        console.log(`There are ${green(filteredTags.length)} tags:`);
-        console.log(filteredTags);
+        const allRepoTopics = await getAllRepoTopics(repoNames);
+        const formattedRepoTopics = allRepoTopics.flatMap((topics) => topics);
+        const topicObject = createTopicObject(formattedRepoTopics);
+        const filteredTopics = filterTopics(topicObject);
+        console.log(`There are ${green(filteredTopics.length)} topics:`);
+        console.log(filteredTopics);
     } catch (error) {
         console.error(red(`Error in logResponse: ${error.message}`));
     }
