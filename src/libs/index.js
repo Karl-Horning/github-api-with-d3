@@ -13,7 +13,7 @@ dotenv.config();
 
 // Ensure that the API_KEY variable is provided in the .env file
 if (!process.env.API_KEY) {
-    console.error(red("Please provide a API_KEY variable in the .env file."));
+    console.error(red("Please provide an API_KEY variable in the .env file."));
     process.exit(1);
 }
 
@@ -198,8 +198,7 @@ const getReposTopicStats = async () => {
         const filteredTopics = filterTopics(topicObject);
 
         // Step 7: Log the filtered topics to the console
-        console.log(`There are ${green(filteredTopics.length)} topics:`);
-        console.log(filteredTopics);
+        console.log(`There are ${green(filteredTopics.length)} topics`);
 
         // Step 8: Return the filtered topic statistics
         return filteredTopics;
