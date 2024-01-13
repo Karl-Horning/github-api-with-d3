@@ -139,6 +139,35 @@ const getAllRepoTags = async (repoNames) =>
     Promise.all(repoNames.map(getRepoTags));
 
 /**
+ * Creates an array of objects representing tag counts based on the input array of tags.
+ *
+ * @param {string[]} formattedRepoTags - An array containing tag names.
+ * @returns {Object[]} An array of objects with tag names as keys and their corresponding counts as values.
+ */
+const createTagObject = (formattedRepoTags) => {
+    // Create an object to count tag occurrences
+    const tagCountObject = formattedRepoTags.reduce((acc, tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Convert the object to an array of objects
+    const tagCountArray = Object.entries(tagCountObject).map(
+        ([tag, count]) => ({
+            tag,
+            count,
+        })
+    );
+
+    // Sort the array by count in descending order
+    tagCountArray.sort(
+        (a, b) => b.count - a.count || a.tag.localeCompare(b.tag)
+    );
+
+    return tagCountArray;
+};
+
+/**
  * Logs the response containing formatted repository tags.
  */
 const logResponse = async () => {
@@ -147,7 +176,9 @@ const logResponse = async () => {
         const repoNames = getRepoNames(allRepos);
         const allRepoTags = await getAllRepoTags(repoNames);
         const formattedRepoTags = allRepoTags.flatMap((tags) => tags);
-        console.log(formattedRepoTags);
+        const tagObject = createTagObject(formattedRepoTags);
+        console.log(`There are ${green(tagObject.length)} tags:`);
+        console.log(tagObject);
     } catch (error) {
         console.error(red(`Error in logResponse: ${error.message}`));
     }
