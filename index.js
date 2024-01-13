@@ -147,7 +147,8 @@ const getAllRepoTags = async (repoNames) =>
 const createTagObject = (formattedRepoTags) => {
     // Create an object to count tag occurrences
     const tagCountObject = formattedRepoTags.reduce((acc, tag) => {
-        acc[tag] = (acc[tag] || 0) + 1;
+        const lowercaseTag = tag.toLowerCase();
+        acc[lowercaseTag] = (acc[lowercaseTag] || 0) + 1;
         return acc;
     }, {});
 
@@ -168,6 +169,19 @@ const createTagObject = (formattedRepoTags) => {
 };
 
 /**
+ * Filters out specified tags and tags with count less than or equal to 1.
+ *
+ * @param {Object[]} tags - An array of objects with tag names and their corresponding counts.
+ * @param {string[]} tagsToFilter - An array of tag names to filter out.
+ * @returns {Object[]} An array of filtered objects with tag names and counts.
+ */
+const filterTags = (tags, tagsToFilter = ["freecodecamp", "codepen"]) => {
+    return tags.filter(
+        (tag) => tag.count > 1 && !tagsToFilter.includes(tag.tag)
+    );
+};
+
+/**
  * Logs the response containing formatted repository tags.
  */
 const logResponse = async () => {
@@ -177,8 +191,9 @@ const logResponse = async () => {
         const allRepoTags = await getAllRepoTags(repoNames);
         const formattedRepoTags = allRepoTags.flatMap((tags) => tags);
         const tagObject = createTagObject(formattedRepoTags);
-        console.log(`There are ${green(tagObject.length)} tags:`);
-        console.log(tagObject);
+        const filteredTags = filterTags(tagObject);
+        console.log(`There are ${green(filteredTags.length)} tags:`);
+        console.log(filteredTags);
     } catch (error) {
         console.error(red(`Error in logResponse: ${error.message}`));
     }
