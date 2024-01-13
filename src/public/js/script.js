@@ -18,14 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 "#000000",
                 "#333333",
                 "#666666",
-                "#999999",
-                "#cccccc",
             ];
 
             const colourPalette = [...colours, ...greyScale];
 
             const barHeight = 55;
-            const marginTop = 30;
+            const marginTop = 60;
             const marginRight = 0;
             const marginBottom = 10;
             const marginLeft = 30;
@@ -74,6 +72,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     "max-width: 100%; height: auto; font: 10px sans-serif;"
                 );
 
+            // Append a title to the SVG.
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", marginTop / 2) // Adjusted position for the title
+                .attr("text-anchor", "middle")
+                .style("font-size", "18px") // Adjust the font size of the title
+                .style("font-weight", "bold")
+                .text("Karl Horning's GitHub Topics");
+
             // Append bars to the SVG.
             svg.append("g")
                 .selectAll()
@@ -84,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .attr("width", (d) => x(d.count) - x(0))
                 .attr("height", y.bandwidth())
                 .attr("fill", (d, i) =>
-                    i < colourPalette.length ? colourPalette[i] : "#cccccc"
+                    i < colourPalette.length ? colourPalette[i] : greyScale[greyScale.length - 1]
                 );
 
             // Append labels to the SVG.
