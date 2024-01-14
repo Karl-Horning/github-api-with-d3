@@ -70,29 +70,40 @@ const createGitHubTopicsChart = (data, container) => {
         .attr("viewBox", [0, 0, width, height])
         .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
 
-    // Append a title to the SVG.
+    // Append a title to the SVG with fade-in effect
     svg.append("text")
         .attr("x", width / 2)
-        .attr("y", MARGIN_TOP / 2) // Adjusted position for the title
+        .attr("y", MARGIN_TOP / 2)
         .attr("text-anchor", "middle")
-        .style("font-size", "18px") // Adjust the font size of the title
+        .style("font-size", "18px")
         .style("font-weight", "bold")
-        .text(`${username}'s GitHub Topics`);
+        .attr("opacity", 0) // Set initial opacity to 0
+        .text(`${username}'s GitHub Topics`)
+        .transition()
+        .duration(1000) // Adjust the duration as needed
+        .attr("opacity", 1); // Fade in by setting opacity to 1
 
-    // Append bars to the SVG.
-    svg.append("g")
+    // Append a group element for the bars
+    const barsGroup = svg.append("g");
+
+    // Append bars to the SVG
+    barsGroup
         .selectAll()
         .data(data)
         .join("rect")
         .attr("x", x(0))
         .attr("y", (d, i) => y(i.toString()))
-        .attr("width", (d) => x(d.count) - x(0))
+        .attr("width", 0) // Set initial width to 0 for the animation
         .attr("height", y.bandwidth())
         .attr("fill", (d, i) =>
             i < colourPalette.length
                 ? colourPalette[i]
                 : greyScale[greyScale.length - 1]
-        );
+        )
+        // Add transition effect on bar width
+        .transition()
+        .duration(1000) // Set the duration of the animation in milliseconds
+        .attr("width", (d) => x(d.count) - x(0));
 
     // Append labels to the SVG.
     svg.append("g")
@@ -129,15 +140,23 @@ const createGitHubTopicsChart = (data, container) => {
         .attr("dx", 8) // Adjust the distance from the bar
         .text((d) => d.topic);
 
-    // Append top axis to the SVG.
+    // Append top axis to the SVG with fade-in effect
     svg.append("g")
         .attr("transform", `translate(0,${MARGIN_TOP})`)
-        .call(d3.axisTop(x));
+        .attr("opacity", 0) // Set initial opacity to 0
+        .call(d3.axisTop(x))
+        .transition()
+        .duration(1000) // Adjust the duration as needed
+        .attr("opacity", 1); // Fade in by setting opacity to 1
 
-    // Append left axis to the SVG.
+    // Append left axis to the SVG with fade-in effect
     svg.append("g")
         .attr("transform", `translate(${MARGIN_LEFT},0)`)
-        .call(d3.axisLeft(y).tickSizeOuter(0));
+        .attr("opacity", 0) // Set initial opacity to 0
+        .call(d3.axisLeft(y).tickSizeOuter(0))
+        .transition()
+        .duration(1000) // Adjust the duration as needed
+        .attr("opacity", 1); // Fade in by setting opacity to 1
 
     // Append the SVG to the document body.
     container.appendChild(svg.node());
