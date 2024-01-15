@@ -65,7 +65,7 @@ const createGitHubTopicsChart = (data, container) => {
      */
     const svg = d3
         .create("svg")
-        .attr("width", width)
+        .attr("width", width + 20) // + 20 stops the top axis number being pushed off page
         .attr("height", height)
         .attr("viewBox", [0, 0, width, height])
         .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
@@ -153,7 +153,7 @@ const createGitHubTopicsChart = (data, container) => {
     svg.append("g")
         .attr("transform", `translate(${MARGIN_LEFT},0)`)
         .attr("opacity", 0) // Set initial opacity to 0
-        .call(d3.axisLeft(y).tickSizeOuter(0))
+        .call(d3.axisLeft(y).tickFormat((d, i) => `${i+1}`).tickSizeOuter(0)) // Starts the left axis from 1
         .transition()
         .duration(1000) // Adjust the duration as needed
         .attr("opacity", 1); // Fade in by setting opacity to 1
