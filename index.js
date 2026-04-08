@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Express server that exposes GitHub topic statistics via a
+ * REST endpoint and serves the D3 visualisation frontend.
+ */
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -10,6 +15,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, "src", "public")));
 
+/** Returns aggregated GitHub topic statistics as JSON. */
 app.get("/api/data", async (_req, res) => {
     try {
         const githubData = await getReposTopicStats();
@@ -20,6 +26,7 @@ app.get("/api/data", async (_req, res) => {
     }
 });
 
+/** Serves the D3 visualisation page. */
 app.get("/", (_req, res) => {
     res.sendFile(path.join(__dirname, "src", "public", "html", "index.html"));
 });
