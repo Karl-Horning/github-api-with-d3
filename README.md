@@ -1,128 +1,50 @@
 # GitHub API with D3
 
----
-
-## Table of Contents
-
-- [GitHub API with D3](#github-api-with-d3)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Demo](#demo)
-  - [Tech Stack](#tech-stack)
-  - [Installation](#installation)
-  - [Scripts](#scripts)
-  - [Project Structure](#project-structure)
-  - [To Do](#to-do)
-  - [Known Issues](#known-issues)
-  - [Contributing](#contributing)
-  - [Acknowledgements](#acknowledgements)
-  - [Licence](#licence)
-  - [Author](#author)
-
----
-
-## Overview
-
-A simple D3-powered web app that fetches and visualises GitHub repository topics using the GitHub API. It defaults to [Karl-Horning](https://github.com/Karl-Horning) but can be adapted to display any GitHub user's public repos.
-
----
+A proof-of-concept Express app that fetches GitHub repository topics via the GitHub API and renders them as an animated D3 bar chart. Built to explore live portfolio data visualisation; cut because topic counts vary too much between accounts to style consistently.
 
 ## Demo
 
 ![Preview of topic visualisation](./src/public/img/preview.png)
 
-Runs locally at: [http://localhost:3000](http://localhost:3000)
-
----
-
-## Tech Stack
+## Tech stack
 
 - **Frontend**: D3.js, Bootstrap
 - **Backend**: Express
 - **API**: GitHub REST API via `@octokit/core`
-- **Languages**: JavaScript (Node.js)
-- **Tooling**: Chalk, Dotenv
-
----
 
 ## Installation
 
-```bash
-git clone https://github.com/Karl-Horning/github-api-with-d3.git
-cd github-api-with-d3
-npm install
-```
+1. Clone the repository and install dependencies:
 
----
+   ```bash
+   git clone https://github.com/Karl-Horning/github-api-with-d3.git
+   cd github-api-with-d3
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env`.
+3. Add your GitHub personal access token as `API_KEY`.
 
 ## Scripts
 
-| Command     | Description              |
-| ----------- | ------------------------ |
-| `npm start` | Start the Express server |
+| Command       | Description                       |
+| ------------- | --------------------------------- |
+| `npm start`   | Start the Express server          |
+| `npm run dev` | Start with nodemon (auto-restart) |
 
----
+## Project structure
 
-## Project Structure
-
-```bash
+```text
 /
-├── public/              # Static assets (if applicable)
 ├── src/
-│   ├── public/img/      # Visual assets for the UI
-│   ├── routes/          # Express routes
-│   ├── utils/           # Utility functions
-│   └── views/           # HTML and D3 code
-├── .env.example         # Example environment file
-└── index.js             # Entry point
+│   ├── libs/          # GitHub API data-fetching and topic aggregation
+│   └── public/
+│       ├── html/      # Main HTML entry point
+│       ├── img/       # Preview assets
+│       └── js/        # D3 chart logic and bundled D3 library
+└── index.js           # Express server entry point
 ```
-
----
-
-## To Do
-
-- [ ] Add user input to customise GitHub username
-- [ ] Refactor into reusable chart components
-- [ ] Add tests and CI config
-
----
-
-## Known Issues
-
-- Does not yet support private repositories
-- Chart styling can break on very small screens
-
----
-
-## Contributing
-
-Pull requests are welcome! Please fork the repo and use a feature branch.
-
-```bash
-git checkout -b your-feature-name
-```
-
-Once your changes are ready, open a pull request with a clear description.
-
----
-
-## Acknowledgements
-
-- [D3.js](https://d3js.org/)
-- [Express](https://expressjs.com/)
-- [@octokit/core](https://github.com/octokit/core.js)
-- [Chalk](https://www.npmjs.com/package/chalk)
-- [Dotenv](https://www.npmjs.com/package/dotenv)
-- [Bootstrap](https://getbootstrap.com/)
-
----
 
 ## Licence
 
-MIT © 2025 Karl Horning
-
----
-
-## Author
-
-Made with ❤️ by [Karl Horning](https://github.com/Karl-Horning)
+MIT © 2024 [Karl Horning](https://github.com/Karl-Horning)

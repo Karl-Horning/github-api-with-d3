@@ -1,7 +1,7 @@
 {
-  "name": "github-api-test",
+  "name": "github-api-with-d3",
   "version": "1.0.0",
-  "description": "Testing the GitHub API",
+  "description": "Fetches GitHub repository topics via the GitHub API and renders them as an animated D3 bar chart",
   "main": "index.js",
   "scripts": {
     "start": "node index",
@@ -10,19 +10,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Karl-Horning/github-api-test.git"
+    "url": "git+https://github.com/Karl-Horning/github-api-with-d3.git"
   },
   "keywords": [
     "github",
     "api",
-    "javascript"
+    "d3",
+    "javascript",
+    "data-visualisation"
   ],
   "author": "Karl Horning",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Karl-Horning/github-api-test/issues"
+    "url": "https://github.com/Karl-Horning/github-api-with-d3/issues"
   },
-  "homepage": "https://github.com/Karl-Horning/github-api-test#readme",
+  "homepage": "https://github.com/Karl-Horning/github-api-with-d3#readme",
   "devDependencies": {
     "nodemon": "^3.0.2"
   },
