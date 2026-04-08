@@ -1,9 +1,5 @@
 // Dev dependencies
 const dotenv = require("dotenv");
-const chalk = require("chalk");
-
-// Destructuring to get specific chalk colours
-const { red, green } = chalk;
 
 // Dependencies
 const { Octokit } = require("@octokit/core");
@@ -21,9 +17,7 @@ const REPO_API_ROUTE = "GET /users/{username}/repos?per_page=100&page=1";
 const TOPIC_API_ROUTE = "GET /repos/{owner}/{repo}/topics";
 
 if (!API_KEY || API_KEY.trim() === "") {
-    console.error(
-        red("Please provide a valid API_KEY variable in the .env file.")
-    );
+    console.error("Please provide a valid API_KEY variable in the .env file.");
     process.exit(1);
 }
 
@@ -45,22 +39,16 @@ const getAllRepoInformation = async (username = USERNAME) => {
     }
 
     try {
-        // API request to fetch repo information
         const response = await octokit.request(REPO_API_ROUTE, {
             username,
         });
 
-        // Log the successful response
-        console.log(
-            green(`Successfully fetched repo information for ${username}`)
-        );
+        console.log(`Successfully fetched repo information for ${username}`);
 
         return response.data;
     } catch (error) {
-        // Log the error
-        console.error(red(`Error fetching repo information: ${error.message}`));
+        console.error(`Error fetching repo information: ${error.message}`);
 
-        // Rethrow the error with a more descriptive message
         throw new Error(
             `Error fetching repo information for ${username}: ${error.message}`
         );
@@ -89,17 +77,12 @@ const getRepoTopics = async (repo) => {
             repo,
         });
 
-        // Log the successful response
-        console.log(green(`Successfully fetched ${repo}`));
+        console.log(`Successfully fetched ${repo}`);
 
         return response.data.names;
     } catch (error) {
-        // Log the error
-        console.error(
-            red(`Error fetching topic information: ${error.message}`)
-        );
+        console.error(`Error fetching topic information: ${error.message}`);
 
-        // Rethrow the error with a more descriptive message
         throw new Error(
             `Error fetching topics for repo ${repo}: ${error.message}`
         );
@@ -122,14 +105,12 @@ const getAllRepoTopics = async (repoNames) =>
  * @returns {Object[]} An array of objects with topic names as keys and their corresponding counts as values.
  */
 const createTopicObject = (formattedRepoTopics) => {
-    // Create an object to count topic occurrences
     const topicCountObject = formattedRepoTopics.reduce((acc, topic) => {
         const lowercaseTopic = topic.toLowerCase();
         acc[lowercaseTopic] = (acc[lowercaseTopic] || 0) + 1;
         return acc;
     }, {});
 
-    // Convert the object to an array of objects
     const topicCountArray = Object.entries(topicCountObject).map(
         ([topic, count]) => ({
             topic,
@@ -137,7 +118,6 @@ const createTopicObject = (formattedRepoTopics) => {
         })
     );
 
-    // Sort the array by count in descending order
     topicCountArray.sort(
         (a, b) => b.count - a.count || a.topic.localeCompare(b.topic)
     );
@@ -166,32 +146,18 @@ const filterTopics = (topics, topicsToFilter = ["freecodecamp", "codepen"]) => {
  */
 const getReposTopicStats = async () => {
     try {
-        // Step 1: Fetch all repositories for the specified GitHub user
         const allRepos = await getAllRepoInformation();
-
-        // Step 2: Extract repository names from the fetched repositories
         const repoNames = getRepoNames(allRepos);
-
-        // Step 3: Fetch topics for all repositories in parallel
         const allRepoTopics = await getAllRepoTopics(repoNames);
-
-        // Step 4: Flatten the array of topics from multiple repositories into a single array
         const formattedRepoTopics = allRepoTopics.flatMap((topics) => topics);
-
-        // Step 5: Create an object representing topic counts based on the array of topics
         const topicObject = createTopicObject(formattedRepoTopics);
-
-        // Step 6: Filter out specified topics and topics with count less than or equal to 1
         const filteredTopics = filterTopics(topicObject);
 
-        // Step 7: Log the filtered topics to the console
-        console.log(`There are ${green(filteredTopics.length)} topics`);
+        console.log(`There are ${filteredTopics.length} topics`);
 
-        // Step 8: Return the filtered topic statistics
         return filteredTopics;
     } catch (error) {
-        // Log and rethrow any errors that occur during the process
-        console.error(red(`Error fetching topic stats: ${error.message}`));
+        console.error(`Error fetching topic stats: ${error.message}`);
         throw new Error(`Error fetching topic stats: ${error.message}`);
     }
 };

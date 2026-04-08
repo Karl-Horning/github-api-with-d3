@@ -2,9 +2,6 @@ const express = require("express");
 const path = require("path");
 const getReposTopicStats = require("./src/libs");
 
-const chalk = require("chalk");
-const { red, yellow, green, bgWhite } = chalk;
-
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -41,15 +38,15 @@ app.use((err, req, res, next) => {
 process.on("SIGINT", () => {
     try {
         // Notify about SIGINT and initiate graceful shutdown
-        console.log(yellow("Received SIGINT. Closing Node.js app..."));
+        console.log("Received SIGINT. Closing Node.js app...");
         // Close the server
         server.close(() => {
-            console.log(green("Server closed. Exiting process."));
+            console.log("Server closed. Exiting process.");
             process.exit(0);
         });
     } catch (error) {
         // Handle errors during graceful shutdown
-        console.error(red("Error during graceful shutdown:"), error);
+        console.error("Error during graceful shutdown:", error);
         process.exit(1);
     }
 });
@@ -57,5 +54,5 @@ process.on("SIGINT", () => {
 // Start the server
 const server = app.listen(port, () => {
     // Server started successfully
-    console.log(bgWhite(`Server is running on http://localhost:${port} 🚀`));
+    console.log(`Server is running on http://localhost:${port}`);
 });
