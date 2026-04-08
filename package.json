@@ -2,10 +2,11 @@
   "name": "github-api-with-d3",
   "version": "1.0.0",
   "description": "Fetches GitHub repository topics via the GitHub API and renders them as an animated D3 bar chart",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
-    "dev": "nodemon index",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

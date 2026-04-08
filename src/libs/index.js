@@ -1,11 +1,5 @@
-// Dev dependencies
-const dotenv = require("dotenv");
-
-// Dependencies
-const { Octokit } = require("@octokit/core");
-
-// Load environment variables from .env file
-dotenv.config();
+import "dotenv/config";
+import { Octokit } from "@octokit/core";
 
 /**
  * The API key for GitHub
@@ -33,15 +27,12 @@ const octokit = new Octokit({
  * @returns {Promise<Array>} A promise that resolves to an array containing repository information for the specified user.
  */
 const getAllRepoInformation = async (username = USERNAME) => {
-    // Input validation
     if (typeof username !== "string" || username.trim() === "") {
         throw new Error("Invalid username");
     }
 
     try {
-        const response = await octokit.request(REPO_API_ROUTE, {
-            username,
-        });
+        const response = await octokit.request(REPO_API_ROUTE, { username });
 
         console.log(`Successfully fetched repo information for ${username}`);
 
@@ -112,10 +103,7 @@ const createTopicObject = (formattedRepoTopics) => {
     }, {});
 
     const topicCountArray = Object.entries(topicCountObject).map(
-        ([topic, count]) => ({
-            topic,
-            count,
-        })
+        ([topic, count]) => ({ topic, count })
     );
 
     topicCountArray.sort(
@@ -132,11 +120,10 @@ const createTopicObject = (formattedRepoTopics) => {
  * @param {string[]} topicsToFilter - An array of topic names to filter out.
  * @returns {Object[]} An array of filtered objects with topic names and counts.
  */
-const filterTopics = (topics, topicsToFilter = ["freecodecamp", "codepen"]) => {
-    return topics.filter(
+const filterTopics = (topics, topicsToFilter = ["freecodecamp", "codepen"]) =>
+    topics.filter(
         (topic) => topic.count > 1 && !topicsToFilter.includes(topic.topic)
     );
-};
 
 /**
  * Fetches repository topics for a specified GitHub user and provides statistics.
@@ -162,5 +149,4 @@ const getReposTopicStats = async () => {
     }
 };
 
-// Export the function for use in other modules
-module.exports = getReposTopicStats;
+export default getReposTopicStats;
