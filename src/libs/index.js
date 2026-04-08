@@ -1,30 +1,33 @@
 import "dotenv/config";
 import { Octokit } from "@octokit/core";
 
-/**
- * The API key for GitHub
- * @type {string}
- */
+/** @type {string} */
 const API_KEY = process.env.API_KEY;
-const USERNAME = "Karl-Horning";
+
+/** @type {string} */
+const USERNAME = process.env.GITHUB_USERNAME || "Karl-Horning";
+
+// Note: fetches only the first page of up to 100 repositories.
 const REPO_API_ROUTE = "GET /users/{username}/repos?per_page=100&page=1";
 const TOPIC_API_ROUTE = "GET /repos/{owner}/{repo}/topics";
+
+// Topics excluded from the visualisation regardless of count.
+const DEFAULT_TOPICS_TO_FILTER = ["freecodecamp", "codepen"];
 
 if (!API_KEY || API_KEY.trim() === "") {
     console.error("Please provide a valid API_KEY variable in the .env file.");
     process.exit(1);
 }
 
-const octokit = new Octokit({
-    auth: API_KEY,
-});
+const octokit = new Octokit({ auth: API_KEY });
 
 /**
  * Fetches repository information for a GitHub user.
  *
- * @param {string} [username=USERNAME] - The GitHub username for which to fetch repository information.
- * @throws {Error} Throws an error if the provided username is invalid or if there's an issue fetching the repository information.
- * @returns {Promise<Array>} A promise that resolves to an array containing repository information for the specified user.
+ * @param {string} [username] The GitHub username to fetch repositories for.
+ *     Defaults to the value of `GITHUB_USERNAME` in `.env`.
+ * @throws {Error} If the username is invalid or the API request fails.
+ * @returns {Promise<Array<Object>>} Repository data from the GitHub API.
  */
 const getAllRepoInformation = async (username = USERNAME) => {
     if (typeof username !== "string" || username.trim() === "") {
@@ -47,19 +50,19 @@ const getAllRepoInformation = async (username = USERNAME) => {
 };
 
 /**
- * Extracts repo names from an array of repositories.
+ * Extracts repository names from an array of repository objects.
  *
- * @param {Array} repos - An array of repository objects.
- * @returns {Array} An array of repository names.
+ * @param {Array<Object>} repos Repository objects from the GitHub API.
+ * @returns {Array<string>} Repository names.
  */
 const getRepoNames = (repos) => repos.map((repo) => repo.name);
 
 /**
- * Fetches topics for a specific repository.
+ * Fetches topics for a single repository.
  *
- * @param {string} repo - The name of the repository.
- * @throws {Error} Throws an error if there's an issue fetching topic information.
- * @returns {Promise<Array>} A promise that resolves to an array containing topic names for the specified repository.
+ * @param {string} repo Repository name.
+ * @throws {Error} If the API request fails.
+ * @returns {Promise<Array<string>>} Topic names for the repository.
  */
 const getRepoTopics = async (repo) => {
     try {
@@ -83,20 +86,21 @@ const getRepoTopics = async (repo) => {
 /**
  * Fetches topics for multiple repositories in parallel.
  *
- * @param {Array} repoNames - An array of repository names.
- * @returns {Promise<Array>} A promise that resolves to an array containing topic names for multiple repositories.
+ * @param {Array<string>} repoNames Repository names to fetch topics for.
+ * @returns {Promise<Array<Array<string>>>} Topic names grouped by repository.
  */
 const getAllRepoTopics = async (repoNames) =>
     Promise.all(repoNames.map(getRepoTopics));
 
 /**
- * Creates an array of objects representing topic counts based on the input array of topics.
+ * Counts topic occurrences across all repositories and returns them sorted
+ * by count descending, then alphabetically.
  *
- * @param {string[]} formattedRepoTopics - An array containing topic names.
- * @returns {Object[]} An array of objects with topic names as keys and their corresponding counts as values.
+ * @param {Array<string>} topics Flat array of topic names.
+ * @returns {Array<{topic: string, count: number}>} Sorted topic counts.
  */
-const createTopicObject = (formattedRepoTopics) => {
-    const topicCountObject = formattedRepoTopics.reduce((acc, topic) => {
+const createTopicObject = (topics) => {
+    const topicCountObject = topics.reduce((acc, topic) => {
         const lowercaseTopic = topic.toLowerCase();
         acc[lowercaseTopic] = (acc[lowercaseTopic] || 0) + 1;
         return acc;
@@ -114,22 +118,28 @@ const createTopicObject = (formattedRepoTopics) => {
 };
 
 /**
- * Filters out specified topics and topics with count less than or equal to 1.
+ * Filters out low-signal topics from the topic count array.
  *
- * @param {Object[]} topics - An array of objects with topic names and their corresponding counts.
- * @param {string[]} topicsToFilter - An array of topic names to filter out.
- * @returns {Object[]} An array of filtered objects with topic names and counts.
+ * Topics with a count of 1 are excluded, as are any topics listed in
+ * `topicsToFilter`.
+ *
+ * @param {Array<{topic: string, count: number}>} topics Topic count array.
+ * @param {Array<string>} [topicsToFilter] Topics to exclude regardless of
+ *     count. Defaults to {@link DEFAULT_TOPICS_TO_FILTER}.
+ * @returns {Array<{topic: string, count: number}>} Filtered topic counts.
  */
-const filterTopics = (topics, topicsToFilter = ["freecodecamp", "codepen"]) =>
+const filterTopics = (topics, topicsToFilter = DEFAULT_TOPICS_TO_FILTER) =>
     topics.filter(
         (topic) => topic.count > 1 && !topicsToFilter.includes(topic.topic)
     );
 
 /**
- * Fetches repository topics for a specified GitHub user and provides statistics.
+ * Fetches and aggregates GitHub repository topic statistics for the
+ * configured user.
  *
- * @throws {Error} Throws an error if there's an issue fetching repository information or topics.
- * @returns {Promise<Array>} A promise that resolves to an array containing filtered topic statistics.
+ * @throws {Error} If any API request fails.
+ * @returns {Promise<{username: string, topics: Array<{topic: string, count: number}>}>}
+ *     The GitHub username and its filtered topic counts.
  */
 const getReposTopicStats = async () => {
     try {
@@ -142,7 +152,7 @@ const getReposTopicStats = async () => {
 
         console.log(`There are ${filteredTopics.length} topics`);
 
-        return filteredTopics;
+        return { username: USERNAME, topics: filteredTopics };
     } catch (error) {
         console.error(`Error fetching topic stats: ${error.message}`);
         throw new Error(`Error fetching topic stats: ${error.message}`);
