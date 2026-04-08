@@ -23,7 +23,7 @@ A proof-of-concept Express app that fetches GitHub repository topics via the Git
    ```
 
 2. Copy `.env.example` to `.env`.
-3. Add your GitHub personal access token as `API_KEY`.
+3. Add your GitHub personal access token as `API_KEY` and your GitHub username as `GITHUB_USERNAME`.
 
 ## Scripts
 
