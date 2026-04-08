@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const chalk = require("chalk");
 
 // Destructuring to get specific chalk colours
-const { red, yellow, green } = chalk;
+const { red, green } = chalk;
 
 // Dependencies
 const { Octokit } = require("@octokit/core");
@@ -11,22 +11,15 @@ const { Octokit } = require("@octokit/core");
 // Load environment variables from .env file
 dotenv.config();
 
-// Ensure that the API_KEY variable is provided in the .env file
-if (!process.env.API_KEY) {
-    console.error(red("Please provide an API_KEY variable in the .env file."));
-    process.exit(1);
-}
-
 /**
  * The API key for GitHub
- * @type {number}
+ * @type {string}
  */
 const API_KEY = process.env.API_KEY;
 const USERNAME = "Karl-Horning";
 const REPO_API_ROUTE = "GET /users/{username}/repos?per_page=100&page=1";
 const TOPIC_API_ROUTE = "GET /repos/{owner}/{repo}/topics";
 
-// Ensure that the API_KEY variable is provided in the .env file
 if (!API_KEY || API_KEY.trim() === "") {
     console.error(
         red("Please provide a valid API_KEY variable in the .env file.")
@@ -34,14 +27,8 @@ if (!API_KEY || API_KEY.trim() === "") {
     process.exit(1);
 }
 
-/**
- * The API key for GitHub
- * @type {number}
- */
-const apiKey = API_KEY;
-
 const octokit = new Octokit({
-    auth: apiKey,
+    auth: API_KEY,
 });
 
 /**
