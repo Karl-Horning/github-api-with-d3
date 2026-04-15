@@ -45,6 +45,6 @@ A proof-of-concept Express app that fetches GitHub repository topics via the Git
 └── index.js           # Express server entry point
 ```
 
-## Licence
+## License
 
-MIT © 2024 [Karl Horning](https://github.com/Karl-Horning)
+Released under the [MIT License](./LICENSE) by [Karl Horning](https://github.com/Karl-Horning).
