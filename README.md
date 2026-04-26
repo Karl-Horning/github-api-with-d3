@@ -1,5 +1,7 @@
 # GitHub API with D3
 
+> **Archived.** This was a proof-of-concept that was cut from active development; see below for the reason. No further changes are planned.
+
 A proof-of-concept Express app that fetches GitHub repository topics via the GitHub API and renders them as an animated D3 bar chart. Built to explore live portfolio data visualisation; cut because topic counts vary too much between accounts to style consistently.
 
 ## Demo
